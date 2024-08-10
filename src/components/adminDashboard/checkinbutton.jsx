@@ -1248,15 +1248,6 @@ const CheckinButton = () => {
     const todayDate = new Date().toISOString().split('T')[0];
     const [selectedWorkMode, setSelectedWorkMode] = useState('');
 
-    // Using the useGeolocated hook
-    // const { coords, isGeolocationAvailable, isGeolocationEnabled } =
-    //     useGeolocated({
-    //         positionOptions: {
-    //             enableHighAccuracy: false,
-    //         },
-    //         userDecisionTimeout: 5000,
-    //     });
-
 
     // Handle change event for selecting work mode
     const handleChange = (event) => {
@@ -1268,48 +1259,51 @@ const CheckinButton = () => {
     const empCode = localStorage.getItem('empCode');
 
     const handleApplyAttendance = async () => {
-       
+
 
         const getLocation = () => {
             return new Promise((resolve, reject) => {
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                  (position) => {
-                    resolve({
-                      latitude: position.coords.latitude,
-                      longitude: position.coords.longitude,
-                    });
-                  },
-                  (error) => {
-                    console.log("Error fetching location:", error);
-                    resolve({}); // Return an empty object if location fetch fails
-                  }
-                );
-              } else {
-                resolve({});
-              }
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            resolve({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                            });
+                        },
+                        (error) => {
+                            console.log("Error fetching location:", error);
+                            resolve({}); // Return an empty object if location fetch fails
+                        }
+                    );
+                } else {
+                    resolve({});
+                }
             });
-          };
-  
-          const location = await getLocation();
+        };
+
+        const location = await getLocation();
 
         const data = {
             empNumber: empNumber, // Replace with actual employee number
             empCode: empCode, // Replace with actual employee code
-            
-            latitude:location.latitude,
-            longitude:location.longitude,
+
+            latitude: location.latitude,
+            longitude: location.longitude,
             remoteWork: selectedWorkMode,
         };
-        console.log("checkin",data)
-
+        console.log("checkin", data)
         const response = await axios.post('http://157.245.109.206:8093/emp-handler/attendence/check-in', data)
         console.log(response.data)
         if (response.status === 202) {
+            localStorage.setItem('workMode', data.remoteWork);
+
             console.log(response);
             setIsPending(false);
+            setSelectedWorkMode(response.data.result.checkIn)
+            localStorage.setItem('checkIn', response.data.result.checkIn)
+            alert("Your Attendence Mark Successfully")
             navigate("/attendence")
-
         }
         else {
             alert("you are already mark attendence");
@@ -1336,17 +1330,19 @@ const CheckinButton = () => {
     // });
 
 
-    const apidata = async()=>{
+    const apidata = async () => {
         const response = await axios.post('http://157.245.109.206:8093/emp-handler/attendence/today-emp-atttendence?empCode=' + empCode)
         if (response.status === 202) {
             console.log("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj")
-            if(response?.data?.result?.checkIn != null)
-            {
+            console.log(response.data.result.remoteWork)
+            if (response?.data?.result?.checkIn != null) {
                 setIsPending(false);
             }
+            setSelectedWorkMode(response.data.result.remoteWork)
             setStatus(response.data.result.attendenceStatus);
             setCheckInTime(response.data.result.checkIn);
-            localStorage.setItem('checkIn',response.data.result.checkIn)
+            localStorage.setItem('checkIn', response.data.result.remoteWork)
+
         }
     }
 
@@ -1362,7 +1358,7 @@ const CheckinButton = () => {
                 <SheetContent>
                     <SheetHeader>
                         <SheetTitle>
-                            <div className="flex justify-center items-center  text-white h-[30px] mt-5 rounded-lg" style={{backgroundColor:'#00ACC1'}}>
+                            <div className="flex justify-center items-center  text-white h-[30px] mt-5 rounded-lg" style={{ backgroundColor: '#00ACC1' }}>
                                 CHECK-IN PAGE
                             </div>
                         </SheetTitle>
@@ -1376,7 +1372,7 @@ const CheckinButton = () => {
                                                 name="workMode"
                                                 value="WFH"
                                                 className="form-radio h-5 w-5"
-                                                
+                                                checked={selectedWorkMode === "WFH"}
                                                 disabled={attendanceApplied}
                                                 onChange={(e) => setSelectedWorkMode(e.target.value)}
                                             />
@@ -1389,6 +1385,7 @@ const CheckinButton = () => {
                                                 value="WFF"
                                                 className="form-radio h-5 w-5 text-black"
                                                 disabled={attendanceApplied}
+                                                checked={selectedWorkMode === "WFF"}
                                                 onChange={(e) => setSelectedWorkMode(e.target.value)}
                                             />
                                             <span className="ml-2 " >WFF</span>
@@ -1400,6 +1397,7 @@ const CheckinButton = () => {
                                                 value="WFO"
                                                 className="form-radio h-5 w-5 text-black"
                                                 disabled={attendanceApplied}
+                                                checked={selectedWorkMode === "WFO"}
                                                 onChange={(e) => setSelectedWorkMode(e.target.value)}
                                             />
                                             <span className="ml-2 " >WFO</span>
@@ -1408,27 +1406,27 @@ const CheckinButton = () => {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label className="block  mb-2"  htmlFor="date">
+                                    <label className="block  mb-2" htmlFor="date">
                                         Today's Date
                                     </label>
                                     <input
                                         type="date"
                                         id="date"
                                         value={todayDate}
-                                        
+
                                         className="border rounded p-2 w-full"
                                         readOnly
                                     />
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block  mb-2"  htmlFor="employee-number">
+                                    <label className="block  mb-2" htmlFor="employee-number">
                                         Employee Number
                                     </label>
                                     <input
                                         type="text"
                                         id="employee-number"
                                         value={empNumber}
-                                        
+
                                         className="border rounded p-2 w-full"
                                     />
                                 </div>
@@ -1437,7 +1435,7 @@ const CheckinButton = () => {
                                     <button
                                         onClick={handleApplyAttendance}
                                         className={`px-4 py-2 rounded border text-black ${isPending
-                                            ? 'bg-white border-black hover:bg-cyan-800 hover:text-white hover:border-none' 
+                                            ? 'bg-white border-black hover:bg-cyan-800 hover:text-white hover:border-none'
                                             : '  text-cyan-800 filter blur-xs border border-cyan-500'
                                             }`}
                                         disabled={!isPending}
@@ -1445,7 +1443,7 @@ const CheckinButton = () => {
                                         Apply Attendance
                                     </button>
                                 </div>}
-                                <div className="flex justify-center items-center  text-white h-[30px] mt-3 mb-3 text-xl font-medium rounded-lg" style={{backgroundColor:'#00ACC1'}}> 
+                                <div className="flex justify-center items-center  text-white h-[30px] mt-3 mb-3 text-xl font-medium rounded-lg" style={{ backgroundColor: '#00ACC1' }}>
                                     Attendance Status
                                 </div>
 
@@ -1498,7 +1496,7 @@ const CheckinButton = () => {
                                                 <label className="block text-gray-700  w-1/2" >
                                                     Current Date
                                                 </label>
-                                                <div className="text-gray-800 w-2/3" > 
+                                                <div className="text-gray-800 w-2/3" >
                                                     : {isPending ? '--' : todayDate}
                                                 </div>
                                             </div>

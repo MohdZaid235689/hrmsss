@@ -14,8 +14,8 @@ const EmployeeDashboard = () => {
     const [isToggled, setIsToggled] = useState(false);
     const [baseImage, setBaseImage] = useState("");
     const [selectedFile, setSelectedFile] = useState(null);
-    const [records,setRecord] = useState([])
-    const [count,setCount] = useState(0)
+    const [records, setRecord] = useState([])
+    const [count, setCount] = useState(0)
     const name = localStorage.getItem('name')
 
     const fetchApi = async () => {
@@ -242,7 +242,14 @@ const EmployeeDashboard = () => {
                                     <div className="flex justify-between">
                                         <p className="text-sm font-semibold">{record.todayDate}</p>
                                         <button
-                                            className={`top-4 right-4 px-1 py-1 rounded-md font-semibold focus:outline-none ${record.attendenceStatus === "ONTIME"  ? "bg-green-500 text-white hover:bg-green-600" : "bg-red-500 text-white hover:bg-red-600"}`}
+                                            // className={`top-4 right-4 px-1 py-1 rounded-md font-semibold focus:outline-none ${record.attendenceStatus === "ONTIME"  ? "bg-green-500 text-white hover:bg-green-600" : "bg-red-500 text-white hover:bg-red-600"}`}
+                                            className={`top-4 right-4 px-4 py-1 rounded-md font-semibold focus:outline-none ${record.attendenceStatus === "ONTIME" ?
+                                                    "bg-green-500 text-white hover:bg-green-600" :
+                                                    record.attendenceStatus === "LATE" ?
+                                                        "bg-yellow-500 text-white hover:bg-yellow-600 " :
+                                                        record.attendenceStatus === "ABSENT" ?
+                                                            "bg-red-500 text-white hover:bg-red-600" :
+                                                            ""}`}
                                         >
                                             {record.attendenceStatus}
                                         </button>
@@ -254,7 +261,7 @@ const EmployeeDashboard = () => {
                         </div>
 
 
-                        
+
 
                     </div>
 

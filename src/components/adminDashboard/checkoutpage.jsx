@@ -12,31 +12,19 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const CheckOutButton = () => {
+
+
     const navigate = useNavigate()
     const [isPending, setIsPending] = useState(true);
-    const [checkOutTime,setcheckOutTime] = useState('')
+    const [checkOutTime, setcheckOutTime] = useState('')
     const [attendanceApplied, setAttendanceApplied] = useState(false);
     const [checkInTime, setCheckInTime] = useState('');
     const [status, setStatus] = useState('Pending');
-    const [workingHours,setWorkingHours] = useState(0)
+    const [workingHours, setWorkingHours] = useState(0)
 
     const todayDate = new Date().toISOString().split('T')[0];
 
     const [selectedWorkMode, setSelectedWorkMode] = useState('');
-
-
-    const [description,setDescription] = useState('')
-
-    
-   
-   
-
-    
-
-
-
-    
-
 
     // Handle change event for selecting work mode
     const handleChange = (event) => {
@@ -48,61 +36,54 @@ const CheckOutButton = () => {
     const empCode = localStorage.getItem('empCode');
 
     const handleApplyAttendance = async () => {
-        // if (!isGeolocationAvailable || !isGeolocationEnabled || !coords) {
-        //     console.error("Geolocation is not available or enabled.");
-        //     return;
-        // }
-        // const dataa = {
-        //     latitude: coords.latitude,
-        //     longitude: coords.longitude,
-        // }
 
 
         const getLocation = () => {
             return new Promise((resolve, reject) => {
-              if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                  (position) => {
-                    resolve({
-                      latitude: position.coords.latitude,
-                      longitude: position.coords.longitude,
-                    });
-                  },
-                  (error) => {
-                    console.log("Error fetching location:", error);
-                    resolve({}); // Return an empty object if location fetch fails
-                  }
-                );
-              } else {
-                resolve({});
-              }
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        (position) => {
+                            resolve({
+                                latitude: position.coords.latitude,
+                                longitude: position.coords.longitude,
+                            });
+                        },
+                        (error) => {
+                            console.log("Error fetching location:", error);
+                            resolve({}); // Return an empty object if location fetch fails
+                        }
+                    );
+                } else {
+                    resolve({});
+                }
             });
-          };
-  
-          const location = await getLocation();
+        };
+
+        const location = await getLocation();
 
         const data = {
-            name : localStorage.getItem('name'),
+            name: localStorage.getItem('name'),
             empNumber: empNumber, // Replace with actual employee number
             empCode: empCode, // Replace with actual employee code
-            
-            latitude:location.latitude,
-            longitude:location.longitude,
-            
+
+            latitude: location.latitude,
+            longitude: location.longitude,
+
             remoteWork: localStorage.getItem('remoteWork'),
-            description: description 
+            description: description
         };
-        console.log("checkout",data)
+        console.log("checkout", data)
 
 
         const response = await axios.post('http://157.245.109.206:8093/emp-handler/attendence/check-out', data)
         console.log(response.data)
         if (response.status === 202) {
             // setIsPending(false)
-            localStorage.setItem('checkout-Time',response.data.result.checkIn)
-            localStorage.setItem('remoteWork',response.data.result.remoteWork)
-            
-
+            localStorage.setItem('checkout-Time', response.data.result.checkIn)
+            localStorage.setItem('remoteWork', response.data.result.remoteWork)
+            setCheckInTime(response.data.result.checkIn);
+            setcheckOutTime(response.data.result.checkOut)
+            setWorkingHours(response.data.result.workingHours)
             console.log(response);
             navigate("/attendence")
             setIsPending(false);
@@ -112,15 +93,14 @@ const CheckOutButton = () => {
         }
     };
 
-    const apidata = async()=>{
+    const apidata = async () => {
 
-        const response = await axios.post('http://157.245.109.206:8093/emp-handler/attendence/today-emp-atttendence?empCode='+empCode)
+        const response = await axios.post('http://157.245.109.206:8093/emp-handler/attendence/today-emp-atttendence?empCode=' + empCode)
         if (response.status === 202) {
-            if(response.data.result.checkOut != null)
-            {
+            if (response.data.result.checkOut != null) {
                 setIsPending(false)
             }
-            
+            setSelectedWorkMode(response.data.result.remoteWork)
             setCheckInTime(response.data.result.checkIn);
             setcheckOutTime(response.data.result.checkOut)
             setWorkingHours(response.data.result.workingHours)
@@ -129,11 +109,18 @@ const CheckOutButton = () => {
 
     }
 
+    useEffect(() => {
+        const savedWorkMode = localStorage.getItem('workMode');
+        if (savedWorkMode) {
+            setSelectedWorkMode(savedWorkMode);
+        }
+    }, [])
+
     return (
         <div>
             <Sheet>
                 <SheetTrigger>
-                <button className='font-medium text-gray-500  px-4 py-2 rounded-full border-2 border-blue-500' onClick={apidata}>Check-out</button>
+                    <button className='font-medium text-gray-500  px-4 py-2 rounded-full border-2 border-blue-500' onClick={apidata}>Check-out</button>
                     {/* <button className="text-md font-medium text-green-800 bg-green-200 rounded-full ">
                         Check-out
                     </button> */}
@@ -141,13 +128,13 @@ const CheckOutButton = () => {
                 <SheetContent className="max-h-screen overflow-auto">
                     <SheetHeader>
                         <SheetTitle>
-                            <div className="flex justify-center items-center   text-white h-[30px] mt-5 rounded-lg" style={{backgroundColor:"#00BCD4"}}>
+                            <div className="flex justify-center items-center   text-white h-[30px] mt-5 rounded-lg" style={{ backgroundColor: "#00BCD4" }}>
                                 CHECK-Out PAGE
                             </div>
                         </SheetTitle>
                         <SheetDescription>
                             <div className="mt-4">
-                            <div className="mb-4">
+                                <div className="mb-4">
                                     <div className="flex gap-4 mb-4">
                                         <div className="flex items-center">
                                             <label className="flex items-center mr-4">
@@ -157,7 +144,7 @@ const CheckOutButton = () => {
                                                     value="WFH"
                                                     className="form-radio h-5 w-5 "
 
-                                                    checked={selectedWorkMode === 'WFH'}
+                                                    checked={selectedWorkMode === "WFH"}
                                                     disabled
                                                 />
                                                 <span className="ml-2  ">WFH</span>
@@ -168,7 +155,7 @@ const CheckOutButton = () => {
                                                     name="workMode"
                                                     value="WFF"
                                                     className="form-radio h-5 w-5 "
-                                                    checked={selectedWorkMode === 'WFF'}
+                                                    checked={selectedWorkMode === "WFF"}
                                                     disabled
                                                 />
                                                 <span className="ml-2  ">WFF</span>
@@ -179,7 +166,7 @@ const CheckOutButton = () => {
                                                     name="workMode"
                                                     value="WFO"
                                                     className="form-radio h-5 w-5 "
-                                                    checked={selectedWorkMode === 'WFO'}
+                                                    checked={selectedWorkMode === "WFO"}
                                                     disabled
                                                 />
                                                 <span className="ml-2  ">WFO</span>
@@ -189,7 +176,7 @@ const CheckOutButton = () => {
 
 
 
-                
+
 
 
 
@@ -197,13 +184,13 @@ const CheckOutButton = () => {
                                         Check-In Time
                                     </label>
                                     <input
-                                        
+
                                         value={checkInTime}
                                         className="border rounded p-2 w-full "
                                         readOnly
                                     />
                                 </div>
-                                
+
                                 <div className="mb-4">
                                     <label className="block  mb-2" htmlFor="employee-number">
                                         Employee Number
@@ -239,7 +226,7 @@ const CheckOutButton = () => {
                                         Check-out Button
                                     </button>
                                 </div>}
-                                <div className="flex justify-center items-center   text-white h-[30px] mt-3 mb-3 text-xl font-medium rounded-lg"  style={{backgroundColor:"#00BCD4"}}>
+                                <div className="flex justify-center items-center   text-white h-[30px] mt-3 mb-3 text-xl font-medium rounded-lg" style={{ backgroundColor: "#00BCD4" }}>
                                     Attendance Status
                                 </div>
 
@@ -252,7 +239,7 @@ const CheckOutButton = () => {
                                                 <label className="block  mb-2 w-1/2  ">
                                                     Check-in Time
                                                 </label>
-                                                <div className="w-2/3  ">
+                                                <div className="w-2/3">
                                                     : {isPending ? '--' : checkInTime}
                                                 </div>
                                             </div>
