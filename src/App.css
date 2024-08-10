@@ -1,0 +1,211 @@
+.login{
+  background-color: #E5EDF9;
+}
+
+.otpPage{
+  background-color: #E5EDF9;
+}
+
+.dashboard{
+  background-color: #E5EDF9;
+}
+
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width:none; /* Firefox */
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, and Opera */
+}
+
+
+
+/* styles.css or your stylesheet */
+.image-container {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  transition: filter 0.3s ease;
+}
+
+.image-container img:hover {
+  filter: blur(8px); /* Adjust the blur radius as needed */
+}
+
+
+
+/* src/DashboardPage.css */
+@media (max-width: 640px) {
+  .text-xl {
+    font-size: 1.25rem;
+  }
+
+  .text-3xl {
+    font-size: 1.875rem;
+  }
+
+  .text-4xl {
+    font-size: 2.25rem;
+  }
+
+  .text-5xl {
+    font-size: 3rem;
+  }
+}
+/* 
+@media (min-width: 640px) {
+  .lg:w-1 {
+    width: 50%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg:w-1{
+    width: 50%;
+  }
+
+  .text-3xl {
+    font-size: 2rem;
+  }
+
+  .text-4xl {
+    font-size: 2.5rem;
+  }
+
+  .text-5xl {
+    font-size: 3.5rem;
+  }
+} */
+
+
+
+
+/* styles.css */
+.image-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Ensures the image covers the container */
+  transition: filter 0.3s ease;
+}
+
+.image-container img:hover {
+  filter: blur(8px); /* Adjust the blur radius as needed */
+}
+
+.edit-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the button */
+  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  display: none; /* Hide by default */
+  text-align: center;
+}
+
+.image-container:hover .edit-button {
+  display: block; /* Show button on hover */
+}
+
+input[type="file"] {
+  display: none; /* Hide the file input */
+}
+
+
+
+
+
+/* Add to your CSS file or style section */
+.login-page {
+  font-family: 'Arial', sans-serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 15px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 10px;
+  }
+  
+  .title-font {
+    font-size: 2.5rem;
+  }
+  
+  .leading-relaxed {
+    font-size: 1.25rem;
+  }
+
+  .text-lg {
+    font-size: 1rem;
+  }
+  
+  .text-xl {
+    font-size: 1.25rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .p-8 {
+    padding: 2rem;
+  }
+  
+  .py-10 {
+    padding-top: 2.5rem;
+    padding-bottom: 2.5rem;
+  }
+  
+  .flex-col {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .title-font {
+    font-size: 1.75rem;
+  }
+  
+  .leading-relaxed {
+    font-size: 1rem;
+  }
+  
+  .text-lg {
+    font-size: 0.875rem;
+  }
+  
+  .text-xl {
+    font-size: 1rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.25rem;
+  }
+
+  .py-10 {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+  
+  .p-8 {
+    padding: 1.5rem;
+  }
+}
